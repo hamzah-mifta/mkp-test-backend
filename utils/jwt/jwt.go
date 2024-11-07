@@ -36,7 +36,7 @@ func (s *jwtService) GenerateToken(ctx context.Context, userID int64) (token str
 }
 
 func (s *jwtService) ValidateToken(ctx context.Context, tokenString string) (token *jwt.Token, err error) {
-	return jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
