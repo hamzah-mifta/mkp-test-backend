@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/hamzah-mifta/mkp-test-backend/config"
@@ -15,12 +14,10 @@ func main() {
 	configApp := config.LoadConfig()
 
 	// Setup infra
-	dbInstance, err := datastore.NewDatabase(configApp.DatabaseURL)
+	_, err := datastore.NewDatabase(configApp.DatabaseURL)
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Println(dbInstance)
 
 	// Setup repository
 
@@ -33,6 +30,7 @@ func main() {
 	// Setup route and middleware
 	e := echo.New()
 	e.Use(middleware.CORS())
+	e.Use(middleware.Logger())
 
 	// Setup handler
 	e.GET("/ping", func(c echo.Context) error {
