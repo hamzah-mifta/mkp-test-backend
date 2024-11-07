@@ -102,3 +102,17 @@ func (u *scheduleUsecase) Update(ctx context.Context, id int64, request *request
 	err = u.scheduleRepo.Update(ctx, &schedule)
 	return
 }
+
+func (u *scheduleUsecase) Delete(ctx context.Context, id int64) (err error) {
+	_, err = u.scheduleRepo.GetByID(ctx, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = utils.NewNotFoundError("schedule not found")
+			return
+		}
+		return
+	}
+
+	err = u.scheduleRepo.Delete(ctx, id)
+	return
+}

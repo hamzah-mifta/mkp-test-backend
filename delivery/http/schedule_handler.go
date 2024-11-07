@@ -26,6 +26,7 @@ func NewScheduleHandler(e *echo.Echo, middleware *middleware.Middleware, schedul
 	apiV1.GET("/schedules", handler.Fetch, middleware.JWTAuth())
 	apiV1.GET("/schedules/:id", handler.GetByID, middleware.JWTAuth())
 	apiV1.PUT("/schedules/:id", handler.Update, middleware.JWTAuth())
+	apiV1.DELETE("/schedules/:id", handler.Delete, middleware.JWTAuth())
 }
 
 func (h *ScheduleHandler) Create(c echo.Context) error {
@@ -103,4 +104,19 @@ func (h *ScheduleHandler) Update(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{"message": "schedule updated successfully"})
+}
+
+func (h *ScheduleHandler) Delete(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusNotFound, utils.NewNotFoundError("schedule not found"))
+	}
+
+	if err := h.ScheduleUsecase.Delete(ctx, int64(id)); err != nil {
+		return c.JSON(utils.ParseHttpError(err))
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{"message": "schedule deleted successfully"})
 }
