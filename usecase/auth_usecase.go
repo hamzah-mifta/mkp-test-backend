@@ -51,3 +51,23 @@ func (u *authUsecase) SignUp(ctx context.Context, request *request.SignUpReq) (e
 
 	return
 }
+
+func (u *authUsecase) SignIn(ctx context.Context, request *request.SignInReq) (accessToken string, err error) {
+	user, err := u.userRepo.GetByEmail(ctx, request.Email)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = utils.NewBadRequestError("invalid email or password")
+			return
+		}
+
+		return
+	}
+
+	if isValid := u.cryptoSvc.ValidatePassword(ctx, user.Password, request.Password); !isValid {
+		err = utils.NewBadRequestError("invalid email or password")
+		return
+	}
+
+	accessToken, err = u.jwtSvc.GenerateToken(ctx, user.ID)
+	return
+}

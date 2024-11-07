@@ -8,4 +8,5 @@ import (
 
 type AuthUsecase interface {
 	SignUp(ctx context.Context, req *request.SignUpReq) error
+	SignIn(ctx context.Context, req *request.SignInReq) (string, error)
 }

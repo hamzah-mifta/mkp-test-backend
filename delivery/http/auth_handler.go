@@ -20,6 +20,7 @@ func NewAuthHandler(e *echo.Echo, authUsecase domain.AuthUsecase) {
 
 	apiV1 := e.Group("/api/v1")
 	apiV1.POST("/auth/signup", handler.SignUp)
+	apiV1.POST("/auth/signin", handler.SignIn)
 }
 
 func (h *AuthHandler) SignUp(c echo.Context) error {
@@ -39,7 +40,31 @@ func (h *AuthHandler) SignUp(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"success": true,
 		"message": "sigend up succesfully",
+	})
+}
+
+func (h *AuthHandler) SignIn(c echo.Context) error {
+	ctx := c.Request().Context()
+	var req request.SignInReq
+
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.NewUnprocessableEntityError(err.Error()))
+	}
+
+	if err := req.Validate(); err != nil {
+		return c.JSON(http.StatusBadRequest, utils.NewBadRequestError(err.Error()))
+	}
+
+	accessToken, err := h.AuthUsecase.SignIn(ctx, &req)
+	if err != nil {
+		return c.JSON(utils.ParseHttpError(err))
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "signed in successfully",
+		"data": map[string]interface{}{
+			"access_token": accessToken,
+		},
 	})
 }
