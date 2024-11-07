@@ -2,9 +2,7 @@
 
 This repository is a part of recruitment process for Backend Developer position in PT. Mitra Kasih Perkasa.
 
-## Prerequisite
-
-TBA
+Flowchart, explanation and database design located in `docs` directory
 
 ## Author
 
