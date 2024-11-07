@@ -27,7 +27,8 @@ type ScheduleRepository interface {
 }
 
 type ScheduleUsecase interface {
-	Create(ctx context.Context, schedule *request.CreateScheduleReq) error
+	Create(ctx context.Context, req *request.CreateScheduleReq) error
 	Fetch(ctx context.Context) ([]Schedule, error)
 	GetByID(ctx context.Context, id int64) (Schedule, error)
+	Update(ctx context.Context, id int64, req *request.UpdateScheduleReq) error
 }

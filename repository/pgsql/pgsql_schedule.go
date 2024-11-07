@@ -73,7 +73,7 @@ func (r *pgsqlScheduleRepository) GetByID(ctx context.Context, id int64) (schedu
 }
 
 func (r *pgsqlScheduleRepository) Update(ctx context.Context, schedule *domain.Schedule) (err error) {
-	query := "UPDATE schedule SET show_date = $1, start_time = $2, end_time = $3, updated_at = $4 WHERE id = $5"
+	query := "UPDATE schedules SET show_date = $1, start_time = $2, end_time = $3, updated_at = $4 WHERE id = $5"
 	res, err := r.db.ExecContext(ctx, query, schedule.ShowDate, schedule.StartTime, schedule.EndTime, schedule.UpdatedAt, schedule.ID)
 	if err != nil {
 		return

@@ -73,3 +73,32 @@ func (u *scheduleUsecase) GetByID(ctx context.Context, id int64) (schedule domai
 
 	return
 }
+
+func (u *scheduleUsecase) Update(ctx context.Context, id int64, request *request.UpdateScheduleReq) (err error) {
+	if request.ShowDate.Before(time.Now()) {
+		err = utils.NewBadRequestError("show date must be in the future")
+		return
+	}
+
+	if request.StartTime.After(request.EndTime) {
+		err = utils.NewBadRequestError("start time must be before end time")
+	}
+
+	schedule, err := u.scheduleRepo.GetByID(ctx, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			err = utils.NewNotFoundError("schedule not found")
+			return
+		}
+
+		return
+	}
+
+	schedule.ShowDate = request.ShowDate
+	schedule.StartTime = request.StartTime
+	schedule.EndTime = request.EndTime
+	schedule.UpdatedAt = time.Now()
+
+	err = u.scheduleRepo.Update(ctx, &schedule)
+	return
+}
