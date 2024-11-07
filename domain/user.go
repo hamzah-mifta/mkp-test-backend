@@ -10,8 +10,8 @@ type User struct {
 	Email     string    `json:"email"`
 	Password  string    `json:"password"`
 	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type UserRepository interface {
