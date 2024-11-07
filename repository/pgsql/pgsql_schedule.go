@@ -32,7 +32,7 @@ func (r *pgsqlScheduleRepository) Create(ctx context.Context, schedule *domain.S
 	return err
 }
 
-func (r *pgsqlScheduleRepository) GetAll(ctx context.Context) (schedules []domain.Schedule, err error) {
+func (r *pgsqlScheduleRepository) Fetch(ctx context.Context) (schedules []domain.Schedule, err error) {
 	query := "SELECT id, movie_id, theater_id, show_date, start_time, end_time, created_at, updated_at FROM schedules"
 
 	rows, err := r.db.QueryContext(ctx, query)

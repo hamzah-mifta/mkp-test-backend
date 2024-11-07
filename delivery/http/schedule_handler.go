@@ -2,6 +2,7 @@ package http
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/hamzah-mifta/mkp-test-backend/delivery/middleware"
 	"github.com/hamzah-mifta/mkp-test-backend/domain"
@@ -20,7 +21,10 @@ func NewScheduleHandler(e *echo.Echo, middleware *middleware.Middleware, schedul
 	}
 
 	apiV1 := e.Group("/api/v1")
+
 	apiV1.POST("/schedules", handler.Create, middleware.JWTAuth())
+	apiV1.GET("/schedules", handler.Fetch, middleware.JWTAuth())
+	apiV1.GET("/schedules/:id", handler.GetByID, middleware.JWTAuth())
 }
 
 func (h *ScheduleHandler) Create(c echo.Context) error {
@@ -41,5 +45,38 @@ func (h *ScheduleHandler) Create(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "schedule created successfully",
+	})
+}
+
+func (h *ScheduleHandler) Fetch(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	schedules, err := h.ScheduleUsecase.Fetch(ctx)
+	if err != nil {
+		return c.JSON(utils.ParseHttpError(err))
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "success fetch schedules",
+		"data":    schedules,
+	})
+}
+
+func (h *ScheduleHandler) GetByID(c echo.Context) error {
+	ctx := c.Request().Context()
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusNotFound, utils.NewNotFoundError("schedule not found"))
+	}
+
+	schedule, err := h.ScheduleUsecase.GetByID(ctx, int64(id))
+	if err != nil {
+		return c.JSON(utils.ParseHttpError(err))
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "success get schedule",
+		"data":    schedule,
 	})
 }

@@ -20,7 +20,7 @@ type Schedule struct {
 
 type ScheduleRepository interface {
 	Create(ctx context.Context, schedule *Schedule) error
-	GetAll(ctx context.Context) ([]Schedule, error)
+	Fetch(ctx context.Context) ([]Schedule, error)
 	GetByID(ctx context.Context, id int64) (Schedule, error)
 	Update(ctx context.Context, schedule *Schedule) error
 	Delete(ctx context.Context, id int64) error
@@ -28,4 +28,6 @@ type ScheduleRepository interface {
 
 type ScheduleUsecase interface {
 	Create(ctx context.Context, schedule *request.CreateScheduleReq) error
+	Fetch(ctx context.Context) ([]Schedule, error)
+	GetByID(ctx context.Context, id int64) (Schedule, error)
 }

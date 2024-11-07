@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/hamzah-mifta/mkp-test-backend/domain"
@@ -50,6 +51,25 @@ func (u *scheduleUsecase) Create(ctx context.Context, request *request.CreateSch
 		StartTime: request.StartTime,
 		EndTime:   request.EndTime,
 	})
+
+	return
+}
+
+func (u *scheduleUsecase) Fetch(ctx context.Context) (schedules []domain.Schedule, err error) {
+	schedules, err = u.scheduleRepo.Fetch(ctx)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (u *scheduleUsecase) GetByID(ctx context.Context, id int64) (schedule domain.Schedule, err error) {
+	schedule, err = u.scheduleRepo.GetByID(ctx, id)
+	if err != nil && err == sql.ErrNoRows {
+		err = utils.NewNotFoundError("schedule not found")
+		return
+	}
 
 	return
 }
